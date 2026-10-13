@@ -162,21 +162,21 @@ def build_presentation(output_path: str = "reports/Molecular_Graph_Classificatio
     p1.font.size = Pt(16)
     p1.font.bold = True
     p1.font.color.rgb = C_NAVY
-    p1.space_after = Pt(10)
+    p1.space_after = Pt(8)
 
-    steps = (
-        "1. Initialization (t=0): Assign initial categorical label l_0(v) from atom type.\n\n"
-        "2. Neighborhood Multiset Aggregation: Collect neighbor labels:\n"
-        "   M_t(v) = {{ l_{t-1}(u) : u in N(v) }}\n\n"
-        "3. Deterministic Sorting & Hash Compression: Sort M_t(v) and map tuple\n"
-        "   (t, l_{t-1}(v), sort(M_t(v))) -> unique compressed ID.\n\n"
-        "4. Subtree Count Histogram: Count frequencies of discovered subtree patterns.\n\n"
-        "5. Kernel Inner Product: K(G_i, G_j) = < phi(G_i), phi(G_j) > with cosine normalization."
-    )
-    p2 = tf_alg.add_paragraph()
-    p2.text = steps
-    p2.font.size = Pt(12)
-    p2.font.color.rgb = C_DARK
+    steps_list = [
+        "1. Initialization (t = 0): Assign each atom its categorical label ℓ₀(v) = atom_type(v).",
+        "2. Neighborhood Multiset Aggregation: For each atom v, gather neighbor labels:\n   𝓡_t(v) = { ℓ_{t-1}(u) : u ∈ 𝒩(v) }",
+        "3. Deterministic Sorting & Hash Compression:\n   ℓ_t(v) = hash( t, ℓ_{t-1}(v), sort(𝓡_t(v)) )",
+        "4. Subtree Histogram Counting: Compute occurrence counts of all discovered subtree labels:\n   ϕ_t(G) = [ c(G, σ₁)  c(G, σ₂) … c(G, σ_{|Σ_t|}) ]ᵀ",
+        "5. Kernel Gram Matrix: Evaluate inner products with cosine normalization:\n   K_norm(Gᵢ, Gⱼ) = ⟨ϕ(Gᵢ), ϕ(Gⱼ)⟩ / ( ‖ϕ(Gᵢ)‖₂ · ‖ϕ(Gⱼ)‖₂ )"
+    ]
+    for step in steps_list:
+        p_step = tf_alg.add_paragraph()
+        p_step.text = step
+        p_step.font.size = Pt(11.5)
+        p_step.font.color.rgb = C_DARK
+        p_step.space_after = Pt(6)
 
     # Right: Complexity & Implementation Box
     right_card = s3.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(7.8), Inches(1.8), Inches(4.7), Inches(4.8))
@@ -194,20 +194,19 @@ def build_presentation(output_path: str = "reports/Molecular_Graph_Classificatio
     pc1.font.color.rgb = C_BLUE
     pc1.space_after = Pt(10)
 
-    comp_text = (
-        "• Scratch Implementation:\n"
-        "  Strictly manual in src/wl_kernel.py without GraKeL or NetworkX kernel tools.\n\n"
-        "• Time Complexity:\n"
-        "  O(h * N * m) for feature extraction across N graphs with m edges.\n\n"
-        "• Sparse Gram Matrix:\n"
-        "  Constructed using scipy.sparse.csr_matrix to ensure high memory efficiency.\n\n"
-        "• Zero Data Leakage:\n"
-        "  Vocabulary fitted on training graphs only; K_test_train (N_test x N_train) evaluated properly."
-    )
-    pc2 = tf_comp.add_paragraph()
-    pc2.text = comp_text
-    pc2.font.size = Pt(12)
-    pc2.font.color.rgb = C_DARK
+    comp_items = [
+        ("• Scratch Implementation:", "Strictly manual in src/wl_kernel.py without GraKeL or NetworkX kernel tools."),
+        ("• Time Complexity:", "𝒪(h · N · m) for feature extraction across N graphs with m edges."),
+        ("• Memory & Sparse Matrix:", "Uses scipy.sparse.csr_matrix with space bounded by 𝒪(N · n · h)."),
+        ("• Mercer Guarantee:", "K is proven symmetric (K = Kᵀ) and positive semi-definite (λᵢ ≥ 0)."),
+        ("• Zero Data Leakage:", "Vocabulary fitted solely on train graphs; K_test_train (N_test × N_train) evaluated properly.")
+    ]
+    for h_txt, b_txt in comp_items:
+        p_c = tf_comp.add_paragraph()
+        p_c.text = f"{h_txt} {b_txt}"
+        p_c.font.size = Pt(11.5)
+        p_c.font.color.rgb = C_DARK
+        p_c.space_after = Pt(5)
 
     # -------------------------------------------------------------------------
     # Slide 4: Hand-Crafted Proof Example (Cycle C3 vs Path P3)
@@ -233,15 +232,15 @@ def build_presentation(output_path: str = "reports/Molecular_Graph_Classificatio
     p_b1 = tf_c1.add_paragraph()
     p_b1.text = (
         "Consider two distinct graphs with 3 identical atoms [1, 1, 1]:\n\n"
-        "• Graph A (C3 Cycle): Triangle 0-1, 1-2, 2-0\n"
-        "  Each atom has degree 2.\n\n"
-        "• Graph B (P3 Path): Linear chain 0-1, 1-2\n"
-        "  Atoms have degrees 1, 2, 1.\n\n"
+        "• Graph A (C₃ Cycle): Triangle edges (0-1, 1-2, 2-0)\n"
+        "  Every atom has degree = 2.\n\n"
+        "• Graph B (P₃ Path): Linear chain edges (0-1, 1-2)\n"
+        "  Endpoint atoms have degree = 1; center atom has degree = 2.\n\n"
         "At Iteration h = 0:\n"
-        "Both graphs produce identical feature vectors: phi_0 = [3]\n"
-        "The naive 'bag of atoms' model cannot tell them apart!"
+        "Both graphs produce identical feature vectors: ϕ₀ = [3.0]\n"
+        "A naive 'bag of atoms' model cannot tell them apart!"
     )
-    p_b1.font.size = Pt(12.5)
+    p_b1.font.size = Pt(12)
     p_b1.font.color.rgb = C_DARK
 
     c2 = s4.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(6.8), Inches(1.8), Inches(5.7), Inches(4.8))
@@ -261,18 +260,19 @@ def build_presentation(output_path: str = "reports/Molecular_Graph_Classificatio
 
     p_b2 = tf_c2.add_paragraph()
     p_b2.text = (
-        "Neighborhood Multiset Signatures at h = 1:\n\n"
-        "• For C3: All 3 nodes have signature (1, 0, (0, 0)) -> ID 1\n"
-        "  phi(C3) = [3, 3, 0]\n\n"
-        "• For P3: Center node has signature (1, 0, (0, 0)) -> ID 1\n"
-        "  Two leaf nodes have signature (1, 0, (0,)) -> ID 2\n"
-        "  phi(P3) = [3, 1, 2]\n\n"
+        "Neighborhood Signatures at h = 1:\n\n"
+        "• For C₃: All 3 nodes have signature (1, 0, (0, 0)) → ID 1\n"
+        "  ϕ(C₃) = [3, 3, 0]ᵀ\n\n"
+        "• For P₃: Center node signature (1, 0, (0, 0)) → ID 1\n"
+        "  Two endpoints signature (1, 0, (0,)) → ID 2\n"
+        "  ϕ(P₃) = [3, 1, 2]ᵀ\n\n"
         "Resulting Kernel Gram Matrix:\n"
-        "  K = [[18, 12],\n"
-        "       [12, 14]]\n\n"
-        "Conclusion: 1-WL successfully separates the cycle from the path!"
+        "  K = ⎡ 18   12 ⎤\n"
+        "      ⎣ 12   14 ⎦\n\n"
+        "Normalized similarity: 12 / √(18 · 14) = 0.7559 < 1.0\n"
+        "1-WL successfully separates the cycle from the path!"
     )
-    p_b2.font.size = Pt(12.5)
+    p_b2.font.size = Pt(12)
     p_b2.font.color.rgb = C_DARK
 
     # -------------------------------------------------------------------------

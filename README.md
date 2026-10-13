@@ -45,18 +45,36 @@ All models were evaluated under identical, reproducible stratified splits (Train
 
 The 1-WL subtree kernel (Shervashidze et al., 2011) proceeds as follows:
 
-1. **Iteration 0**: Assign initial label $l_0(v) = \text{atom\_type}(v)$ for each atom $v \in V$. Count label frequencies across $G$:
-   $$\phi_0(G) = \left[ c(G, l_1), c(G, l_2), \dots \right]^\top$$
-2. **Iteration $t \in \{1, \dots, h\}$**:
-   - For every node $v$, collect neighbor labels: $\mathcal{M}_t(v) = \{\!\{ l_{t-1}(u) : u \in \mathcal{N}(v) \}\!\}$.
-   - Sort $\mathcal{M}_t(v)$ deterministically: $(s_1, s_2, \dots, s_k)$.
+1. **Iteration 0 (Initialization)**: Assign initial categorical label $\ell_0(v)$ based on the atom type:
+   ```math
+   \ell_0(v) = \text{atom\_type}(v), \quad \forall v \in V
+   ```
+   Count label frequencies across graph $G$:
+   ```math
+   \phi_0(G) = \begin{bmatrix} c(G, \ell_1) & c(G, \ell_2) & \dots & c(G, \ell_{|\Sigma_0|}) \end{bmatrix}^\top
+   ```
+
+2. **Iteration $t \in \{1, \dots, h\}$ (Neighborhood Relabeling)**:
+   - For every node $v$, collect the multiset of neighbor labels:
+     ```math
+     \mathcal{M}_t(v) = \{\!\{ \ell_{t-1}(u) : u \in \mathcal{N}(v) \}\!\}
+     ```
+   - Sort $\mathcal{M}_t(v)$ deterministically in ascending order: $(s_1, s_2, \dots, s_k)$.
    - Compress the tuple signature into a unique integer identifier:
-     $$l_t(v) = \text{map}\Big( t, l_{t-1}(v), (s_1, \dots, s_k) \Big)$$
-   - Extract histogram of new labels: $\phi_t(G)$.
+     ```math
+     \ell_t(v) = \text{hash}\Big( t, \ell_{t-1}(v), (s_1, s_2, \dots, s_k) \Big)
+     ```
+   - Extract histogram of newly discovered labels: $\phi_t(G)$.
+
 3. **Concatenated Feature Vector**:
-   $$\phi(G) = \left[ \phi_0(G)^\top \,\|\, \phi_1(G)^\top \,\|\, \dots \,\|\, \phi_h(G)^\top \right]^\top$$
+   ```math
+   \phi(G) = \begin{bmatrix} \phi_0(G)^\top & \phi_1(G)^\top & \dots & \phi_h(G)^\top \end{bmatrix}^\top \in \mathbb{R}^D
+   ```
+
 4. **Normalized Kernel Matrix**:
-   $$K(G_i, G_j) = \frac{\langle \phi(G_i), \phi(G_j) \rangle}{\|\phi(G_i)\|_2 \cdot \|\phi(G_j)\|_2}$$
+   ```math
+   K_{\text{norm}}(G_i, G_j) = \frac{\langle \phi(G_i), \phi(G_j) \rangle}{\|\phi(G_i)\|_2 \cdot \|\phi(G_j)\|_2}
+   ```
 
 ---
 

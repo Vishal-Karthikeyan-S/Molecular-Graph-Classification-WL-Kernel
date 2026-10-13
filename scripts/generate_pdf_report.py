@@ -243,43 +243,43 @@ def build_pdf_report(output_path: str = "reports/Molecular_Graph_Classification_
     )
     story.append(Paragraph(p_wl1, body_style))
 
-    story.append(Paragraph("• <b>Neighborhood Multiset Aggregation:</b> For each vertex v in V, aggregate the multiset of colors from its immediate 1-hop topological neighbors N(v):", bullet_style))
-    story.append(Paragraph("    M_t(v) = {{ l_{t-1}(u) : u in N(v) }}", math_style))
+    story.append(Paragraph("• <b>Neighborhood Multiset Aggregation:</b> For each vertex v &isin; V, aggregate the multiset of colors from its immediate 1-hop topological neighbors &Nu;(v):", bullet_style))
+    story.append(Paragraph("    &Mu;<sub>t</sub>(v) = { l<sub>t-1</sub>(u) : u &isin; &Nu;(v) }", math_style))
 
-    story.append(Paragraph("• <b>Deterministic Sorting & Injective Compression:</b> Sort M_t(v) in ascending lexicographical order to obtain a canonical tuple (s_1, s_2, ..., s_k), and concatenate with the vertex's current label l_{t-1}(v). An injective mapping g assigns a unique integer ID to this signature across all graphs in the corpus:", bullet_style))
-    story.append(Paragraph("    l_t(v) = g( t, l_{t-1}(v), (s_1, s_2, ..., s_k) )", math_style))
+    story.append(Paragraph("• <b>Deterministic Sorting & Injective Compression:</b> Sort &Mu;<sub>t</sub>(v) in ascending order to obtain a canonical tuple (s<sub>1</sub>, s<sub>2</sub>, ..., s<sub>k</sub>), and concatenate with the vertex's current label l<sub>t-1</sub>(v). An injective mapping g assigns a unique integer ID across all graphs:", bullet_style))
+    story.append(Paragraph("    l<sub>t</sub>(v) = g( t, l<sub>t-1</sub>(v), (s<sub>1</sub>, s<sub>2</sub>, ..., s<sub>k</sub>) )", math_style))
 
     story.append(Paragraph("2.2 Subtree Invariant & Feature Representation", h2_style))
     p_wl2 = (
-        "A foundational property of the 1-WL refinement is that each compressed label l_t(v) corresponds to an equivalence class of rooted subtree patterns "
-        "of height t rooted at vertex v. Let Sigma_t denote the set of all unique compressed labels discovered at iteration t across the training corpus. "
-        "For a graph G, let phi_t(G) in R^{|Sigma_t|} be the histogram vector counting the occurrences of each subtree pattern in G at step t:"
+        "A foundational property of the 1-WL refinement is that each compressed label l<sub>t</sub>(v) corresponds to an equivalence class of rooted subtree patterns "
+        "of height t rooted at vertex v. Let &Sigma;<sub>t</sub> denote the set of all unique compressed labels discovered at iteration t across the training corpus. "
+        "For a graph G, let &phi;<sub>t</sub>(G) count the occurrences of each subtree pattern in G at step t:"
     )
     story.append(Paragraph(p_wl2, body_style))
-    story.append(Paragraph("    phi_t(G) = [ c(G, sigma_{t, 1}), c(G, sigma_{t, 2}), ..., c(G, sigma_{t, |Sigma_t|}) ]^T", math_style))
+    story.append(Paragraph("    &phi;<sub>t</sub>(G) = [ c(G, &sigma;<sub>t,1</sub>),  c(G, &sigma;<sub>t,2</sub>),  ...,  c(G, &sigma;<sub>t,|&Sigma;<sub>t</sub>|</sub>) ]<sup>T</sup>", math_style))
 
     p_wl3 = (
-        "The comprehensive Weisfeiler–Lehman subtree feature vector phi(G) concatenates histograms across all iterations from t = 0 to h:"
+        "The comprehensive Weisfeiler–Lehman subtree feature vector &phi;(G) concatenates histograms across all iterations from t = 0 to h:"
     )
     story.append(Paragraph(p_wl3, body_style))
-    story.append(Paragraph("    phi(G) = [ phi_0(G)^T  ||  phi_1(G)^T  ||  ...  ||  phi_h(G)^T ]^T  in R^D,   where D = sum_{t=0}^h |Sigma_t|", math_style))
+    story.append(Paragraph("    &phi;(G) = [ &phi;<sub>0</sub>(G)<sup>T</sup>  |  &phi;<sub>1</sub>(G)<sup>T</sup>  |  ...  |  &phi;<sub>h</sub>(G)<sup>T</sup> ]<sup>T</sup> &isin; &real;<sup>D</sup>,   where D = &sum;<sub>t=0</sub><sup>h</sup> |&Sigma;<sub>t</sub>|", math_style))
 
     story.append(Paragraph("2.3 Kernel Gram Matrix & Cosine Normalization", h2_style))
     p_wl4 = (
-        "The unnormalized Weisfeiler–Lehman kernel between graphs G_i and G_j evaluates the inner product of their subtree histograms in the RKHS:"
+        "The unnormalized Weisfeiler–Lehman kernel between graphs G<sub>i</sub> and G<sub>j</sub> evaluates the inner product of their subtree histograms in the RKHS:"
     )
     story.append(Paragraph(p_wl4, body_style))
-    story.append(Paragraph("    K(G_i, G_j) = < phi(G_i), phi(G_j) > = sum_{sigma in Sigma} c(G_i, sigma) * c(G_j, sigma)", math_style))
+    story.append(Paragraph("    K(G<sub>i</sub>, G<sub>j</sub>) = &lang;&phi;(G<sub>i</sub>), &phi;(G<sub>j</sub>)&rang; = &sum;<sub>&sigma; &isin; &Sigma;</sub> c(G<sub>i</sub>, &sigma;) &middot; c(G<sub>j</sub>, &sigma;)", math_style))
 
     p_wl5 = (
         "Because molecular graphs vary in atom count (from 3 to 111 atoms in NCI1), unnormalized dot products introduce an artificial bias favoring larger compounds. "
         "To ensure valid scale-invariant topological comparisons, we apply cosine normalization:"
     )
     story.append(Paragraph(p_wl5, body_style))
-    story.append(Paragraph("    K_norm(G_i, G_j) = K(G_i, G_j) / sqrt( K(G_i, G_i) * K(G_j, G_j) )", math_style))
+    story.append(Paragraph("    K<sub>norm</sub>(G<sub>i</sub>, G<sub>j</sub>) = K(G<sub>i</sub>, G<sub>j</sub>) / &radic;( K(G<sub>i</sub>, G<sub>i</sub>) &middot; K(G<sub>j</sub>, G<sub>j</sub>) )", math_style))
     p_mercer = (
-        "By Mercer's Theorem, since K_norm is constructed via the inner product of explicit finite-dimensional feature maps phi(G) / ||phi(G)||_2, "
-        "the resulting Gram matrix K in R^{N x N} is guaranteed to be symmetric (K = K^T) and positive semi-definite (all eigenvalues lambda_i >= 0)."
+        "By Mercer's Theorem, since K<sub>norm</sub> is constructed via the inner product of explicit finite-dimensional feature maps &phi;(G) / ||&phi;(G)||<sub>2</sub>, "
+        "the resulting Gram matrix K &isin; &real;<sup>N &times; N</sup> is guaranteed to be symmetric (K = K<sup>T</sup>) and positive semi-definite (all eigenvalues &lambda;<sub>i</sub> &ge; 0)."
     )
     story.append(Paragraph(p_mercer, body_style))
     story.append(Spacer(1, 8))
@@ -288,26 +288,25 @@ def build_pdf_report(output_path: str = "reports/Molecular_Graph_Classification_
     story.append(Paragraph("3. ALGORITHMIC VERIFICATION: SEPARATING CYCLE C3 AND PATH P3", h1_style))
     p_c3p3 = (
         "To mathematically demonstrate the discriminative power of the manual WL implementation, consider two non-isomorphic graphs "
-        "having identical atom counts (|V| = 3) and identical categorical atom labels [1, 1, 1]:\n"
-        "• Graph A (Triangle Cycle C3): Edges {(0, 1), (1, 2), (2, 0)}. Every vertex has degree 2.\n"
-        "• Graph B (Linear Path P3): Edges {(0, 1), (1, 2)}. Center vertex 1 has degree 2, while endpoints 0 and 2 have degree 1.\n"
-        "At step t = 0 (atom counting alone), both graphs produce identical histogram phi_0 = [3.0]. An algorithm without neighborhood context is blind to the difference."
+        "having identical atom counts (|V| = 3) and identical categorical atom labels [1, 1, 1]:<br/>"
+        "&bull; Graph A (Triangle Cycle C<sub>3</sub>): Edges {(0, 1), (1, 2), (2, 0)}. Every vertex has degree 2.<br/>"
+        "&bull; Graph B (Linear Path P<sub>3</sub>): Edges {(0, 1), (1, 2)}. Center vertex 1 has degree 2, while endpoints 0 and 2 have degree 1.<br/>"
+        "At step t = 0 (atom counting alone), both graphs produce identical histogram &phi;<sub>0</sub> = [3.0]. An algorithm without neighborhood context cannot separate them."
     )
     story.append(Paragraph(p_c3p3, body_style))
 
     p_step1 = (
-        "At step t = 1, neighborhood multiset aggregation yields:\n"
-        "• For C3: Each vertex v has neighbors {1, 1}, forming signature (t=1, label=1, neighbors=(1, 1)). Assigned ID = 1.\n"
-        "• For P3: Center vertex has neighbors {1, 1} -> signature (t=1, label=1, neighbors=(1, 1)) -> ID = 1. "
-        "Both endpoints have single neighbor {1} -> signature (t=1, label=1, neighbors=(1,)) -> ID = 2.\n"
-        "The resulting feature vectors are:\n"
-        "    phi(C3) = [3, 3, 0]^T,       phi(P3) = [3, 1, 2]^T\n"
-        "Evaluating the inner products produces the exact Gram matrix verified by our automated test suite:\n"
-        "    K(C3, C3) = 3*3 + 3*3 + 0*0 = 18\n"
-        "    K(P3, P3) = 3*3 + 1*1 + 2*2 = 14\n"
-        "    K(C3, P3) = 3*3 + 3*1 + 0*2 = 12\n"
-        "    K = [[18, 12], [12, 14]]\n"
-        "The off-diagonal similarity is 12 / sqrt(18 * 14) = 0.7559. The 1-WL algorithm deterministically distinguishes topological connectivity."
+        "At step t = 1, neighborhood multiset aggregation yields:<br/>"
+        "&bull; For C<sub>3</sub>: Each vertex v has neighbors {1, 1}, forming signature (t=1, label=1, neighbors=(1, 1)) &rarr; ID = 1.<br/>"
+        "&bull; For P<sub>3</sub>: Center vertex has neighbors {1, 1} &rarr; ID = 1; both endpoints have single neighbor {1} &rarr; ID = 2.<br/>"
+        "The resulting feature vectors are:<br/>"
+        "    &phi;(C<sub>3</sub>) = [3, 3, 0]<sup>T</sup>,       &phi;(P<sub>3</sub>) = [3, 1, 2]<sup>T</sup><br/>"
+        "Evaluating the inner products produces the exact Gram matrix verified by our automated test suite:<br/>"
+        "    K(C<sub>3</sub>, C<sub>3</sub>) = 3&middot;3 + 3&middot;3 + 0&middot;0 = 18<br/>"
+        "    K(P<sub>3</sub>, P<sub>3</sub>) = 3&middot;3 + 1&middot;1 + 2&middot;2 = 14<br/>"
+        "    K(C<sub>3</sub>, P<sub>3</sub>) = 3&middot;3 + 3&middot;1 + 0&middot;2 = 12<br/>"
+        "    K = [ [18, 12], [12, 14] ]<br/>"
+        "The normalized similarity is 12 / &radic;(18 &middot; 14) = 0.7559 &lt; 1.0. The 1-WL algorithm deterministically distinguishes topological connectivity."
     )
     story.append(Paragraph(p_step1, body_style))
     story.append(Spacer(1, 8))

@@ -120,17 +120,25 @@ if menu == "📌 Project Overview":
         )
 
         st.subheader("🧬 Weisfeiler–Lehman (WL) Subtree Kernel Algorithm")
-        st.markdown("""
+        st.markdown(r"""
         The Weisfeiler–Lehman subtree kernel (Shervashidze et al., 2011) maps graphs into a reproducing kernel Hilbert space (RKHS)
         by counting common subtree patterns:
-        1. **Initial Categorical Labels**: Each atom receives an initial label $l_0(v)$ based on its element.
-        2. **Neighborhood Aggregation**: For each atom, collect the multiset of neighbor labels:
-           $$\mathcal{M}(v) = \{ l_{t-1}(u) : u \in \mathcal{N}(v) \}$$
-        3. **Deterministic Relabeling**: Sort $\mathcal{M}(v)$ deterministically and map the tuple $(l_{t-1}(v), \text{sorted}(\mathcal{M}(v)))$ to a unique integer ID via a global vocabulary.
-        4. **Feature Vector**: Graph feature $\phi(G)$ is the concatenated histogram of subtree labels from $t=0$ to $h$.
-        5. **Kernel Computation**: $K(G_i, G_j) = \phi(G_i)^\top \phi(G_j)$ with cosine normalization.
-        """)
 
+        1. **Initial Categorical Labels**: Each atom receives an initial label based on its atomic species:
+           $$\ell_0(v) = \text{atom}(v), \quad \forall v \in V$$
+
+        2. **Neighborhood Multiset Aggregation**: For each atom, collect the multiset of neighbor labels:
+           $$\mathcal{M}_t(v) = \{\ell_{t-1}(u) : u \in \mathcal{N}(v)\}$$
+
+        3. **Deterministic Relabeling**: Sort neighbor labels deterministically and map the signature to a unique integer ID:
+           $$\ell_t(v) = \text{hash}\Big(t, \ell_{t-1}(v), \text{sort}(\mathcal{M}_t(v))\Big)$$
+
+        4. **Feature Vector**: Graph feature $\phi(G)$ is the concatenated histogram of subtree labels from $t=0$ to $h$:
+           $$\phi(G) = [\phi_0(G)^\top \;\; \phi_1(G)^\top \;\; \dots \;\; \phi_h(G)^\top]^\top \in \mathbb{R}^D$$
+
+        5. **Kernel Computation**: Normalized inner product with cosine normalization:
+           $$K_{\text{norm}}(G_i, G_j) = \frac{\langle \phi(G_i), \phi(G_j) \rangle}{\|\phi(G_i)\|_2 \cdot \|\phi(G_j)\|_2}$$
+        """)
     with col2:
         st.subheader("📊 Key Benchmark Highlights")
         if results:
