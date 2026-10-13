@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🧪 Molecular Graph Classification
+# 🧪 Molecular Graph Classification.
 ### Weisfeiler–Lehman Subtree Kernel vs. Graph Neural Networks on NCI1
 
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
