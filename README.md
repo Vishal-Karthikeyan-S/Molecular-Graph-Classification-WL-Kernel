@@ -261,41 +261,53 @@ During test inference, if a test molecule contains a novel topological subtree u
 
 ```text
 Molecular-Graph-Classification-WL-Kernel/
-├── app.py                      # Interactive Streamlit dashboard
+├── app.py                      # Multi-page interactive Streamlit dashboard
 ├── README.md                   # Full documentation & empirical summary
-├── requirements.txt            # Python dependencies
-├── config.yaml                 # Configuration parameters
+├── requirements.txt            # Python dependencies (PyTorch, PyG, Scikit-Learn, Streamlit)
+├── config.yaml                 # Configuration parameters & hyperparameters
 ├── pytest.ini                  # Pytest configuration
 ├── data/
-│   ├── README.md               # Dataset documentation
-│   └── NCI1/                   # Downloaded NCI1 raw graphs
+│   ├── README.md               # NCI1 dataset documentation & schema
+│   └── NCI1/                   # Raw downloaded NCI1 graph files
 ├── src/
-│   ├── __init__.py
-│   ├── data_loader.py          # Data downloading, validation & stats
-│   ├── preprocessing.py        # MolecularGraph structures & validation
-│   ├── wl_kernel.py            # 1-WL Subtree Kernel from scratch
-│   ├── wl_svm.py               # Precomputed Kernel SVM classifier
-│   ├── baseline.py             # Conventional graph feature baseline
-│   ├── gcn_model.py            # 3-layer GCN model & training loop
-│   ├── experiments.py          # End-to-end benchmark suite
-│   ├── analysis.py             # Research evaluation & reporting
-│   └── visualization.py        # Visualizations & graph plots
+│   ├── __init__.py             # Package initializer
+│   ├── data_loader.py          # Data downloading, parsing, validation & statistics
+│   ├── preprocessing.py        # MolecularGraph structures & PyG format converters
+│   ├── wl_kernel.py            # 1-WL Subtree Kernel from scratch (pure NumPy/SciPy)
+│   ├── wl_svm.py               # Precomputed Kernel SVM with zero-leakage Gram evaluation
+│   ├── baseline.py             # Conventional molecular descriptor baseline + RBF SVM
+│   ├── gcn_model.py            # 3-layer GCN model & PyTorch message passing training loop
+│   ├── experiments.py          # Unified benchmark evaluation suite
+│   ├── analysis.py             # Performance metric aggregation & JSON generation
+│   └── visualization.py        # Publication plot generation & graph visualizations
 ├── tests/
-│   ├── test_preprocessing.py   # Unit tests for preprocessing
-│   └── test_wl_kernel.py       # Unit tests for WL kernel properties
+│   ├── test_preprocessing.py   # Unit tests for molecular graph structures
+│   └── test_wl_kernel.py       # Unit tests for 1-WL properties (Mercer, symmetry, C3 vs P3)
 ├── notebooks/
-│   └── exploratory_analysis.ipynb # Interactive Jupyter analysis
+│   └── exploratory_analysis.ipynb # Interactive Jupyter exploratory data analysis
 ├── scripts/
-│   ├── download_data.py        # Dataset downloader CLI
-│   ├── run_experiments.py      # Benchmark runner CLI
-│   └── generate_report.py      # Report generator CLI
+│   ├── download_data.py        # Dataset downloader & validator CLI
+│   ├── run_experiments.py      # End-to-end benchmark execution CLI
+│   ├── generate_report.py      # Research summary Markdown compiler CLI
+│   ├── generate_pdf_report.py  # Publication-grade academic PDF generator (ReportLab)
+│   └── generate_presentation.py# 16:9 widescreen PowerPoint deck generator (python-pptx)
 ├── models/
-│   └── best_gcn.pt             # Saved GCN checkpoint
+│   └── best_gcn.pt             # Trained GCN model checkpoint
 ├── results/
-│   ├── metrics/                # Benchmark JSON files & stats
-│   └── plots/                  # Generated publication-quality figures
+│   ├── metrics/                # Benchmark JSON metrics & dataset stats
+│   │   ├── benchmark_results.json
+│   │   └── dataset_stats.json
+│   └── plots/                  # Generated 300 DPI publication plots (6 figures)
+│       ├── model_comparison.png
+│       ├── wl_depth_effect.png
+│       ├── runtime_comparison.png
+│       ├── confusion_matrices.png
+│       ├── gcn_training_curves.png
+│       └── dataset_distribution.png
 └── reports/
-    └── project_report.md       # Comprehensive 30-mark research report
+    ├── project_report.md       # Comprehensive 30-mark research report
+    ├── Molecular_Graph_Classification_Report_BW.pdf # Formatted academic PDF report
+    └── Molecular_Graph_Classification_Presentation.pptx # Conference/slide presentation
 ```
 
 ---
@@ -424,16 +436,68 @@ All figures are generated in publication-ready resolution (300 DPI) and stored d
 
 ---
 
-## 7. Citation & References
+## 📚 8. Academic Citations & References
+
+If you utilize this implementation, benchmark codebase, or empirical insights in your academic research, please cite the corresponding literature:
 
 ```bibtex
 @article{shervashidze2011weisfeiler,
-  title={Weisfeiler-lehman graph kernels},
-  author={Shervashidze, Nino and Schweitzer, Pascal and Van Leeuwen, Erik Jan and Mehlhorn, Kurt and Borgwardt, Karsten M},
+  title={Weisfeiler-Lehman Graph Kernels},
+  author={Shervashidze, Nino and Schweitzer, Pascal and Van Leeuwen, Erik Jan and Mehlhorn, Kurt and Borgwardt, Karsten M.},
   journal={Journal of Machine Learning Research},
   volume={12},
-  number={9},
+  number={77},
   pages={2539--2561},
   year={2011}
 }
+
+@inproceedings{morris2019weisfeiler,
+  title={Weisfeiler and Leman Go Neural: Higher-Order Graph Neural Networks},
+  author={Morris, Christopher and Ritzert, Martin and Fey, Matthias and Hamilton, William L. and Lenssen, Jan Eric and Rattan, Gaurav and Grohe, Martin},
+  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},
+  volume={33},
+  number={01},
+  pages={4602--4609},
+  year={2019}
+}
+
+@inproceedings{xu2019powerful,
+  title={How Powerful are Graph Neural Networks?},
+  author={Xu, Keyulu and Hu, Weihua and Leskovec, Jure and Jegelka, Stefanie},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2019}
+}
+
+@inproceedings{kipf2017semi,
+  title={Semi-Supervised Classification with Graph Convolutional Networks},
+  author={Kipf, Thomas N. and Welling, Max},
+  booktitle={International Conference on Learning Representations (ICLR)},
+  year={2017}
+}
+
+@article{wale2008comparison,
+  title={Comparison of Descriptor Spaces for Chemical Compound Retrieval and Classification},
+  author={Wale, Nikil and Watson, Ian A. and Karypis, George},
+  journal={Knowledge and Information Systems},
+  volume={14},
+  number={3},
+  pages={347--375},
+  year={2008}
+}
 ```
+
+---
+
+## 👨‍💻 Authors & Project Context
+
+- **Lead Author & Developer**: **Sricharan A** ([@SricharanAsr](https://github.com/SricharanAsr))
+- **Collaborator / Co-Author**: **Vishal Karthikeyan S** ([@Vishal-Karthikeyan-S](https://github.com/Vishal-Karthikeyan-S))
+- **Repository**: [Molecular-Graph-Classification-WL-Kernel](https://github.com/Vishal-Karthikeyan-S/Molecular-Graph-Classification-WL-Kernel)
+- **Academic Program**: Graph Representation Learning Assessment (Academic Coursework)
+- **Project Domain**: Chemoinformatics, Topological Graph Kernels & Geometric Deep Learning
+
+---
+
+## 📄 License
+
+This repository is licensed under the terms of the **[MIT License](LICENSE)**. You are free to inspect, modify, distribute, and utilize the code for academic and commercial applications with proper author attribution.
