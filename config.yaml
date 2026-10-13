@@ -1,0 +1,42 @@
+# Configuration for Molecular Graph Classification on NCI1
+
+data:
+  name: "NCI1"
+  root: "data"
+  raw_url: "https://www.chrsmrrs.com/graphkerneldatasets/NCI1.zip"
+  fallback_url: "https://ls11-www.cs.tu-dortmund.de/people/morris/graphkerneldatasets/NCI1.zip"
+  num_classes: 2
+  node_features_dim: 37
+
+experiment:
+  seed: 42
+  test_size: 0.2
+  n_splits: 5
+  subset_size: 1000  # Default evaluation subset for quick benchmarks; set null for full 4110
+  full_evaluation: false
+
+wl_kernel:
+  iterations: [0, 1, 2, 3]
+  svm_c_values: [0.01, 0.1, 1.0, 10.0, 100.0]
+  best_c: 1.0
+
+baseline:
+  svm_c: 1.0
+  kernel: "rbf"
+
+gcn:
+  hidden_dim: 64
+  num_layers: 3
+  dropout: 0.3
+  lr: 0.005
+  weight_decay: 0.0001
+  batch_size: 64
+  epochs: 80
+  early_stopping_patience: 15
+
+paths:
+  models_dir: "models"
+  metrics_dir: "results/metrics"
+  plots_dir: "results/plots"
+  predictions_dir: "results/predictions"
+  reports_dir: "reports"

@@ -1,0 +1,140 @@
+[
+  {
+    "model": "Graph Features Baseline (SVM)",
+    "accuracy": 0.6625,
+    "precision": 0.6756756756756757,
+    "recall": 0.625,
+    "f1": 0.6493506493506493,
+    "macro_f1": 0.6620247222656861,
+    "roc_auc": 0.7125,
+    "confusion_matrix": [
+      [
+        84,
+        36
+      ],
+      [
+        45,
+        75
+      ]
+    ],
+    "train_time_sec": 0.04199045803397894,
+    "inference_time_sec": 0.029205125058069825
+  },
+  {
+    "model": "WL-Kernel (h=0) + SVM",
+    "h": 0,
+    "C": 1.0,
+    "accuracy": 0.525,
+    "precision": 0.51875,
+    "recall": 0.6916666666666667,
+    "f1": 0.5928571428571429,
+    "macro_f1": 0.5114285714285715,
+    "roc_auc": 0.5823263888888888,
+    "confusion_matrix": [
+      [
+        43,
+        77
+      ],
+      [
+        37,
+        83
+      ]
+    ],
+    "train_time_sec": 0.020843875012360513,
+    "inference_time_sec": 0.00712354201823473,
+    "num_features": 26
+  },
+  {
+    "model": "WL-Kernel (h=1) + SVM",
+    "h": 1,
+    "C": 1.0,
+    "accuracy": 0.6583333333333333,
+    "precision": 0.69,
+    "recall": 0.575,
+    "f1": 0.6272727272727273,
+    "macro_f1": 0.6559440559440559,
+    "roc_auc": 0.7077777777777777,
+    "confusion_matrix": [
+      [
+        89,
+        31
+      ],
+      [
+        51,
+        69
+      ]
+    ],
+    "train_time_sec": 0.04241629096213728,
+    "inference_time_sec": 0.013524999958463013,
+    "num_features": 206
+  },
+  {
+    "model": "WL-Kernel (h=2) + SVM",
+    "h": 2,
+    "C": 1.0,
+    "accuracy": 0.7125,
+    "precision": 0.7575757575757576,
+    "recall": 0.625,
+    "f1": 0.684931506849315,
+    "macro_f1": 0.7102818453786806,
+    "roc_auc": 0.7685416666666667,
+    "confusion_matrix": [
+      [
+        96,
+        24
+      ],
+      [
+        45,
+        75
+      ]
+    ],
+    "train_time_sec": 0.061731375055387616,
+    "inference_time_sec": 0.019826791947707534,
+    "num_features": 2162
+  },
+  {
+    "model": "WL-Kernel (h=3) + SVM",
+    "h": 3,
+    "C": 1.0,
+    "accuracy": 0.75,
+    "precision": 0.7884615384615384,
+    "recall": 0.6833333333333333,
+    "f1": 0.7321428571428571,
+    "macro_f1": 0.7488839285714286,
+    "roc_auc": 0.788125,
+    "confusion_matrix": [
+      [
+        98,
+        22
+      ],
+      [
+        38,
+        82
+      ]
+    ],
+    "train_time_sec": 0.08273079199716449,
+    "inference_time_sec": 0.02553179196547717,
+    "num_features": 10282
+  },
+  {
+    "model": "Graph Convolutional Network (GCN)",
+    "accuracy": 0.6708333333333333,
+    "precision": 0.6782608695652174,
+    "recall": 0.65,
+    "f1": 0.6638297872340425,
+    "macro_f1": 0.6706904038211029,
+    "roc_auc": 0.7593749999999999,
+    "confusion_matrix": [
+      [
+        83,
+        37
+      ],
+      [
+        42,
+        78
+      ]
+    ],
+    "train_time_sec": 41.30725654098205,
+    "inference_time_sec": 0.22293658298440278
+  }
+]

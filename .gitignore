@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.coverage
+htmlcov/
+data/NCI1/raw/NCI1.zip
+data/NCI1/processed/*.pt
+*.log
+.DS_Store
+.env
+.venv
+venv/
