@@ -95,9 +95,9 @@ menu = st.sidebar.radio(
 
 st.sidebar.markdown("---")
 st.sidebar.info(
-    "**Course**: Graph Representation Learning\n\n"
+    "**Course**: Machine Learning with graphs (23CSE479)\n\n"
     "**Dataset**: NCI1 (National Cancer Institute)\n\n"
-    "**Core Method**: Weisfeiler–Lehman Subtree Kernel from scratch"
+    "**Core Method**: Weisfeiler–Lehman kernel"
 )
 
 # -----------------------------------------------------------------------------

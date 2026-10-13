@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Streamlit](https://img.shields.io/badge/Dashboard-Streamlit-red.svg)](https://streamlit.io/)
 
-A complete, reproducible, research-grade machine learning project for **Graph Representation Learning (30-mark academic assessment)** implementing the **1-dimensional Weisfeiler–Lehman (WL) Subtree Kernel from scratch** and evaluating it against conventional graph-level feature baselines and Graph Convolutional Networks (GCN) on the **NCI1 molecular graph classification benchmark**.
+A complete, reproducible, research-grade machine learning project for **Machine Learning with graphs (Course Code: 23CSE479, 30-mark academic assessment)** implementing the **1-dimensional Weisfeiler–Lehman (WL) Subtree Kernel from scratch** and evaluating it against conventional graph-level feature baselines and Graph Convolutional Networks (GCN) on the **NCI1 molecular graph classification benchmark**.
 
 ---
 

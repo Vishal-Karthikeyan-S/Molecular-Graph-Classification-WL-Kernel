@@ -1,6 +1,4 @@
-# Research Report: Molecular Graph Classification Using the Weisfeiler–Lehman Subtree Kernel
-
-**Academic Assessment in Graph Representation Learning (30 Marks)**  
+**Academic Assessment in Machine Learning with graphs (Course Code: 23CSE479, 30 Marks)**  
 **Dataset**: NCI1 (National Cancer Institute Chemical Benchmark)  
 **Primary Focus**: Weisfeiler–Lehman (WL) Subtree Kernel from Scratch vs. Graph Neural Networks (GNN)
 

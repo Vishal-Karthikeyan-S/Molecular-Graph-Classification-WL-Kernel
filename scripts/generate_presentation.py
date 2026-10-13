@@ -29,7 +29,7 @@ def build_presentation(output_path: str = "reports/Molecular_Graph_Classificatio
     C_WHITE = RGBColor(255, 255, 255)   # White
     C_ACCENT_BG = RGBColor(238, 242, 255)
 
-    def add_header(slide, title_text, category_text="GRAPH REPRESENTATION LEARNING"):
+    def add_header(slide, title_text, category_text="MACHINE LEARNING WITH GRAPHS (23CSE479)"):
         # Category / Kicker
         tb_k = slide.shapes.add_textbox(Inches(0.8), Inches(0.4), Inches(11.7), Inches(0.4))
         tf_k = tb_k.text_frame
@@ -70,7 +70,7 @@ def build_presentation(output_path: str = "reports/Molecular_Graph_Classificatio
     tf1.word_wrap = True
 
     p_kicker = tf1.paragraphs[0]
-    p_kicker.text = "ACADEMIC ASSESSMENT | GRAPH REPRESENTATION LEARNING"
+    p_kicker.text = "MACHINE LEARNING WITH GRAPHS | COURSE CODE: 23CSE479"
     p_kicker.font.size = Pt(13)
     p_kicker.font.bold = True
     p_kicker.font.color.rgb = RGBColor(147, 197, 253)

@@ -52,7 +52,7 @@ class NumberedCanvas(canvas.Canvas):
             self.line(54, letter[1] - 45, letter[0] - 54, letter[1] - 45)
 
             # Running Footer
-            footer_text = "Academic Assessment in Graph Representation Learning (30 Marks) | Author: Vishal Karthikeyan S"
+            footer_text = "Machine Learning with graphs (Course Code: 23CSE479) | Author: Vishal Karthikeyan S"
             page_text = f"Page {self._pageNumber} of {page_count}"
             self.line(54, 45, letter[0] - 54, 45)
             self.drawString(54, 32, footer_text)
@@ -193,7 +193,7 @@ def build_pdf_report(output_path: str = "reports/Molecular_Graph_Classification_
     # Title Block
     story.append(Paragraph("MOLECULAR GRAPH CLASSIFICATION USING THE WEISFEILER–LEHMAN SUBTREE KERNEL", title_style))
     story.append(Paragraph("Comparative Evaluation with Graph Neural Networks on the NCI1 Molecular Dataset", subtitle_style))
-    story.append(Paragraph("Author: Vishal Karthikeyan S  |  GitHub: github.com/Vishal-Karthikeyan-S<br/>Course Assessment: Graph Representation Learning (30 Marks)", meta_style))
+    story.append(Paragraph("Author: Vishal Karthikeyan S  |  GitHub: github.com/Vishal-Karthikeyan-S<br/>Course: Machine Learning with graphs | Course Code: 23CSE479 (30 Marks)", meta_style))
     story.append(HRFlowable(width="100%", thickness=1, color=black, spaceBefore=4, spaceAfter=12))
 
     # Abstract
