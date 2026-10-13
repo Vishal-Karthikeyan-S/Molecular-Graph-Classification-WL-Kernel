@@ -1,5 +1,5 @@
 """
-Streamlit Web Dashboard for Molecular Graph Classification.
+Streamlit Web Dashboard for Molecular Graph classification.
 Provides interactive exploration for:
 1. Overview: Problem formulation & theoretical architecture
 2. Dataset Explorer: NCI1 metrics, graph stats, and interactive molecular visualizer
