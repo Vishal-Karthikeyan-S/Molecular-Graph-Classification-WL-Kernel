@@ -434,9 +434,46 @@ All figures are generated in publication-ready resolution (300 DPI) and stored d
 - **Left (GCN Convergence Curves)**: Cross-entropy loss and validation accuracy curves across 80 epochs with early stopping triggered at patience 15.
 - **Right (Dataset Topology Statistics)**: Class balance breakdown (2,053 inactive vs. 2,057 active compounds) along with atom-count and edge-count histograms across the 4,110 chemical structures.
 
+## ❓ 8. Frequently Asked Questions (FAQ)
+
+<details>
+<summary><b>1. Why does the discrete 1-WL Subtree Kernel outperform a 3-layer GCN on NCI1?</b></summary>
+<br>
+
+Standard spatial message passing in Graph Convolutional Networks (GCN) applies continuous neighborhood aggregation via normalized laplacians $\tilde{D}^{-1/2} \tilde{A} \tilde{D}^{-1/2} H W$. On discrete chemoinformatics benchmarks with categorical node alphabets (atom species), continuous averaging acts as a low-pass filter, potentially smoothing out subtle multi-hop pharmacophoric motifs. In contrast, 1-WL explicitly computes exact multiset color refinements, generating a high-dimensional sparse histogram ($|\Sigma_3| = 10,282$) that preserves discrete structural features. When combined with convex Support Vector Machine optimization, it avoids local minima that affect neural backpropagation on moderately sized molecular datasets.
+</details>
+
+<details>
+<summary><b>2. Why was 1-WL chosen over Graph Isomorphism Networks (GIN)?</b></summary>
+<br>
+
+While Xu et al. (2019) demonstrated that GIN is theoretically as powerful as the 1-WL test in distinguishing graph isomorphisms, training neural parameters with multi-layer perceptrons requires significant hyperparameter tuning and computation. The 1-WL kernel with precomputed SVM achieves superior sample efficiency and deterministic reproducibility in **0.08 seconds**, providing a clean, non-parametric baseline for chemoinformatics tasks.
+</details>
+
+<details>
+<summary><b>3. What happens if neighborhood depth is expanded to $h \ge 4$?</b></summary>
+<br>
+
+As neighborhood depth increases beyond $h=3$, subtree patterns rapidly become graph-specific rather than generalizable across compounds. For molecular graphs with an average diameter of 8–10 bonds, $h \ge 4$ subtrees encompass almost the entire molecular skeleton, causing the Gram matrix to approach the identity matrix ($K \to I$), leading to feature sparsity and overfitting. Our empirical ablation identifies $h=3$ as the optimal trade-off between structural resolution and generalization.
+</details>
+
+<details>
+<summary><b>4. How is data leakage prevented during test-set evaluation?</b></summary>
+<br>
+
+The vocabulary dictionary of compressed subtrees $\Sigma_h$ is built strictly on the training partition ($N_{\text{tr}}$ graphs). When transforming test molecules, only occurrences of known subtrees in $\Sigma_h$ are counted into $\phi(G_{\text{test}})$. Any unique subtree patterns found exclusively in test compounds are ignored. The evaluation Gram matrix $K_{\text{test,train}} \in \mathbb{R}^{N_{\text{te}} \times N_{\text{tr}}}$ is evaluated against the trained support vectors without refitting or exposing test structure distributions.
+</details>
+
+<details>
+<summary><b>5. Can this pipeline be applied to other molecular benchmarks?</b></summary>
+<br>
+
+Yes. The underlying `WeisfeilerLehmanKernel` in `src/wl_kernel.py` accepts any graph matching the `MolecularGraph` data structure (`edge_index`, `node_features`, `num_nodes`). It can be evaluated on other TUDataset benchmarks such as MUTAG, PTC_MR, and PROTEINS by updating `config.yaml`.
+</details>
+
 ---
 
-## 📚 8. Academic Citations & References
+## 📚 9. Academic Citations & References
 
 If you utilize this implementation, benchmark codebase, or empirical insights in your academic research, please cite the corresponding literature:
 
