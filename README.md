@@ -119,40 +119,121 @@ All models were evaluated under identical, reproducible stratified splits (Train
 
 ---
 
-## 3. Mathematical Formulation of the WL Subtree Kernel
+## 🧮 3. Mathematical Foundations of the 1-WL Subtree Kernel
 
-The 1-WL subtree kernel (Shervashidze et al., 2011) proceeds as follows:
+The 1-dimensional Weisfeiler–Lehman (1-WL) graph kernel ([Shervashidze et al., 2011](https://www.jmlr.org/papers/v12/shervashidze11a.html)) generalizes the classical Weisfeiler–Leman graph isomorphism heuristic into a positive semi-definite Mercer kernel over discrete graph structures.
 
-1. **Iteration 0 (Initialization)**: Assign initial categorical label $\ell_0(v)$ based on the atom type:
+### 3.1 Formal Algorithmic Formulation
+
+Let a molecular graph be defined as an attributed graph $G = (V, E, \ell)$ where:
+- $V = \{v_1, \dots, v_n\}$ is the finite set of atoms (nodes),
+- $E \subseteq V \times V$ is the set of covalent bonds (undirected edges),
+- $\ell: V \to \Sigma_0$ is the labeling function assigning an initial categorical atom type (e.g., C, N, O, S, Cl) from a finite alphabet $\Sigma_0$.
+
+The 1-WL subtree kernel executes iterative color refinement across $h$ discrete iteration steps:
+
+#### Step 1: Base Label Initialization ($t = 0$)
+Every atom receives its initial elemental identity:
+```math
+\ell_0(v) = \ell(v) \in \Sigma_0, \quad \forall v \in V
+```
+The base feature representation $\phi_0(G) \in \mathbb{R}^{|\Sigma_0|}$ is the frequency histogram of atomic species:
+```math
+\phi_0(G) = \begin{bmatrix} c(G, \sigma_1) & c(G, \sigma_2) & \dots & c(G, \sigma_{|\Sigma_0|}) \end{bmatrix}^\top
+```
+
+#### Step 2: Neighborhood Multiset Aggregation ($t = 1, \dots, h$)
+For each iteration $t \in \{1, \dots, h\}$ and for every node $v \in V$:
+1. Collect the multiset of colors from all immediate topological neighbors $\mathcal{N}(v) = \{u \in V : (v, u) \in E\}$:
    ```math
-   \ell_0(v) = \text{atom\_type}(v), \quad \forall v \in V
+   \mathcal{M}_t(v) = \{\!\{ \ell_{t-1}(u) \mid u \in \mathcal{N}(v) \}\!\}
    ```
-   Count label frequencies across graph $G$:
+2. Sort $\mathcal{M}_t(v)$ deterministically in lexicographical ascending order into a sorted tuple:
    ```math
-   \phi_0(G) = \begin{bmatrix} c(G, \ell_1) & c(G, \ell_2) & \dots & c(G, \ell_{|\Sigma_0|}) \end{bmatrix}^\top
+   \mathcal{S}_t(v) = \left( s_{v,1}, s_{v,2}, \dots, s_{v,k_v} \right), \quad \text{where } k_v = |\mathcal{N}(v)|
+   ```
+3. Form the composite prefix signature $\left( \ell_{t-1}(v), \mathcal{S}_t(v) \right)$ and compress it using a deterministic injection $f_t: \Sigma_{t-1} \times \Sigma_{t-1}^* \to \Sigma_t$:
+   ```math
+   \ell_t(v) = f_t\Big( \ell_{t-1}(v), \, \left( s_{v,1}, \dots, s_{v,k_v} \right) \Big)
+   ```
+   Each unique signature observed across the entire corpus is assigned an incremental integer index, establishing the expanded alphabet $\Sigma_t$.
+4. Compute the frequency histogram $\phi_t(G) \in \mathbb{R}^{|\Sigma_t|}$ of newly discovered subtree patterns:
+   ```math
+   \phi_t(G) = \begin{bmatrix} c(G, \sigma_1^{(t)}) & c(G, \sigma_2^{(t)}) & \dots & c(G, \sigma_{|\Sigma_t|}^{(t)}) \end{bmatrix}^\top
    ```
 
-2. **Iteration $t \in \{1, \dots, h\}$ (Neighborhood Relabeling)**:
-   - For every node $v$, collect the multiset of neighbor labels:
-     ```math
-     \mathcal{M}_t(v) = \{\!\{ \ell_{t-1}(u) : u \in \mathcal{N}(v) \}\!\}
-     ```
-   - Sort $\mathcal{M}_t(v)$ deterministically in ascending order: $(s_1, s_2, \dots, s_k)$.
-   - Compress the tuple signature into a unique integer identifier:
-     ```math
-     \ell_t(v) = \text{hash}\Big( t, \ell_{t-1}(v), (s_1, s_2, \dots, s_k) \Big)
-     ```
-   - Extract histogram of newly discovered labels: $\phi_t(G)$.
+#### Step 3: Multi-Scale Subtree Concatenation
+The complete topological descriptor $\phi(G) \in \mathbb{R}^D$ is the vertical concatenation of feature histograms across all depths $0 \le t \le h$:
+```math
+\phi(G) = \begin{bmatrix} \phi_0(G) \\ \phi_1(G) \\ \vdots \\ \phi_h(G) \end{bmatrix} \in \mathbb{R}^D, \quad \text{where } D = \sum_{t=0}^h |\Sigma_t|
+```
 
-3. **Concatenated Feature Vector**:
-   ```math
-   \phi(G) = \begin{bmatrix} \phi_0(G)^\top & \phi_1(G)^\top & \dots & \phi_h(G)^\top \end{bmatrix}^\top \in \mathbb{R}^D
-   ```
+---
 
-4. **Normalized Kernel Matrix**:
-   ```math
-   K_{\text{norm}}(G_i, G_j) = \frac{\langle \phi(G_i), \phi(G_j) \rangle}{\|\phi(G_i)\|_2 \cdot \|\phi(G_j)\|_2}
-   ```
+### 3.2 Concrete Worked Walkthrough: Ethanol Molecule ($CH_3-CH_2-OH$)
+
+To illustrate how discrete color refinement uncovers multi-hop chemical environments, consider an idealized molecular graph of Ethanol (hydrogens implicit):
+
+```text
+       (1) [Carbon] ─── (2) [Carbon] ─── (3) [Oxygen]
+          Terminal           Methylene         Hydroxyl
+```
+
+#### Iteration $h = 0$ (Initial Elemental Identity)
+- Label dictionary: $\Sigma_0 = \{\text{'C'}: 0, \text{'O'}: 1\}$.
+- Assignments: $\ell_0(v_1) = \text{'C'} \, (0)$, $\ell_0(v_2) = \text{'C'} \, (0)$, $\ell_0(v_3) = \text{'O'} \, (1)$.
+- Feature vector: $\phi_0(G) = [2, 1]^\top$ (2 Carbons, 1 Oxygen). Note that at $h=0$, terminal and internal carbons are indistinguishable.
+
+#### Iteration $h = 1$ (1-Hop Chemical Environments)
+- **Node $v_1$ (Terminal C)**: Neighbors = $\{v_2\} \implies$ Multiset = $\{0\}$. Signature = `(0, (0))`.
+  - Compressed assignment: $\ell_1(v_1) = 2$ (representing a Carbon bonded to 1 Carbon).
+- **Node $v_2$ (Methylene C)**: Neighbors = $\{v_1, v_3\} \implies$ Multiset = $\{0, 1\}$. Signature = `(0, (0, 1))`.
+  - Compressed assignment: $\ell_1(v_2) = 3$ (representing a Carbon bonded to Carbon and Oxygen).
+- **Node $v_3$ (Hydroxyl O)**: Neighbors = $\{v_2\} \implies$ Multiset = $\{0\}$. Signature = `(1, (0))`.
+  - Compressed assignment: $\ell_1(v_3) = 4$ (representing an Oxygen bonded to 1 Carbon).
+- **Outcome at $h=1$**: The algorithm successfully differentiates the terminal methyl carbon ($v_1$) from the central methylene carbon ($v_2$).
+
+#### Iteration $h = 2$ (2-Hop Extended Subtree Motifs)
+- **Node $v_1$**: Neighbors = $\{v_2\} \implies$ Neighbor color is 3. Signature = `(2, (3))`.
+  - $\ell_2(v_1) = 5$ (Methyl carbon adjacent to an oxygenated methylene unit).
+- **Node $v_2$**: Neighbors = $\{v_1, v_3\} \implies$ Colors are $\{2, 4\}$. Signature = `(3, (2, 4))`.
+  - $\ell_2(v_2) = 6$ (Methylene carbon bridging methyl and hydroxyl groups).
+- **Node $v_3$**: Neighbors = $\{v_2\} \implies$ Color is 3. Signature = `(4, (3))`.
+  - $\ell_2(v_3) = 7$ (Hydroxyl oxygen adjacent to a substituted carbon).
+
+At $h \ge 2$, the kernel captures intact pharmacophores and functional group fragments without requiring hand-engineered chemical fingerprint rules.
+
+---
+
+### 3.3 Mercer Condition & Gram Matrix Construction
+
+#### Theorem (Validity as a Mercer Kernel):
+The Weisfeiler–Lehman subtree kernel is an inner product in a discrete histogram Hilbert space $\mathcal{H}$, and therefore satisfies Mercer's condition:
+```math
+K(G_i, G_j) = \langle \phi(G_i), \phi(G_j) \rangle = \sum_{\sigma \in \Sigma_h} c(G_i, \sigma) \, c(G_j, \sigma)
+```
+For any finite collection of graphs $\{G_1, \dots, G_N\}$ and any vector $c \in \mathbb{R}^N$:
+```math
+c^\top K c = \sum_{i=1}^N \sum_{j=1}^N c_i c_j \langle \phi(G_i), \phi(G_j) \rangle = \left\| \sum_{i=1}^N c_i \phi(G_i) \right\|_2^2 \ge 0
+```
+Hence, the Gram matrix $K \in \mathbb{R}^{N \times N}$ is symmetric positive semi-definite ($K \succeq 0$).
+
+#### Cosine Length Normalization:
+Because molecules vary in atom count $n \in [3, 111]$, larger graphs have systematically higher subtree frequencies. To prevent unnormalized node cardinality from dominating the inner product, we apply unit sphere normalization in $\mathcal{H}$:
+```math
+K_{\text{norm}}(G_i, G_j) = \frac{\langle \phi(G_i), \phi(G_j) \rangle}{\|\phi(G_i)\|_2 \cdot \|\phi(G_j)\|_2} = \left\langle \frac{\phi(G_i)}{\|\phi(G_i)\|_2}, \, \frac{\phi(G_j)}{\|\phi(G_j)\|_2} \right\rangle
+```
+This guarantees $K_{\text{norm}}(G_i, G_i) = 1.0$ and $|K_{\text{norm}}(G_i, G_j)| \le 1.0$, which stabilizes the SVM margin and eliminates scale distortion.
+
+#### Decoupled Zero-Leakage Train/Test Evaluation:
+To prevent data contamination, the vocabulary of subtree labels $\Sigma_h$ is learned exclusively from the training partition:
+```math
+K_{\text{train,train}} \in \mathbb{R}^{N_{\text{tr}} \times N_{\text{tr}}}, \quad K_{\text{train,train}}[i, j] = K_{\text{norm}}(G_i^{\text{train}}, G_j^{\text{train}})
+```
+```math
+K_{\text{test,train}} \in \mathbb{R}^{N_{\text{te}} \times N_{\text{tr}}}, \quad K_{\text{test,train}}[k, j] = K_{\text{norm}}(G_k^{\text{test}}, G_j^{\text{train}})
+```
+During test inference, if a test molecule contains a novel topological subtree unseen in $\Sigma_h^{\text{train}}$, it contributes zero to the inner product. The test Gram matrix is fed into Scikit-Learn's precomputed dual solver without refitting support vectors.
 
 ---
 
