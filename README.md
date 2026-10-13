@@ -300,37 +300,94 @@ Molecular-Graph-Classification-WL-Kernel/
 
 ---
 
-## 5. Quickstart & Installation
+## 🖥️ 5. Interactive Streamlit Web Application (`app.py`)
 
-### Step 1: Install Dependencies
-```bash
-pip install -r requirements.txt
-```
+The repository includes a production-grade interactive graphical application built with Streamlit (`app.py`) providing five modular exploration environments:
 
-### Step 2: Run Automated Unit Tests
-```bash
-pytest
-```
-Expected output: **7 passed** verifying label updates, C3 vs P3 isomorphism, kernel symmetry, Mercer positive semi-definiteness, and test-train dimensions.
+| Navigation Module | Features & Scientific Utility |
+| :--- | :--- |
+| **📌 1. Project Overview** | Complete mathematical problem formulation, topological graph abstractions, and comparative paradigm definitions. |
+| **📊 2. Dataset Explorer** | Interactive molecule selector across all 4,110 NCI1 compounds. Renders topological 2D molecular graphs with atomic color coding, degree distributions, adjacency matrix sparsity, and element frequency breakdowns. |
+| **🔬 3. WL Kernel Explorer** | Step-by-step interactive color refinement visualizer. Allows users to step through iterations $h = 0 \to 3$ on either synthetic benchmark graphs (e.g., Triangle $C_3$ vs. Path $P_3$) or real NCI1 molecules, highlighting newly assigned color classes in real time. |
+| **📈 4. Empirical Model Comparison** | High-density analytical dashboard rendering interactive ROC curves, confusion matrix heatmaps, multi-metric radar charts, and training/inference execution time benchmarks. |
+| **🎯 5. Interactive Prediction Demo** | Single-molecule anti-cancer bioactivity inference engine. Select any compound from the test set to view its 1-WL subtree histogram decomposition, nearest support vectors, SVM decision margin score, and classification confidence. |
 
-### Step 3: Run the Benchmark Pipeline
-```bash
-python scripts/run_experiments.py --subset 1200 --seed 42
-```
-Or to run on all 4,110 graphs:
-```bash
-python scripts/run_experiments.py --subset 0
-```
-
-### Step 4: Launch the Streamlit Dashboard
+To launch the dashboard locally:
 ```bash
 streamlit run app.py
 ```
-Open your browser at `http://localhost:8501` to explore interactive molecular graphs, hand-crafted WL subtree relabeling, and model comparisons.
+*Access via browser at `http://localhost:8501`.*
 
 ---
 
-## 📈 6. Visual Research Gallery & Empirical Plots
+## 🚀 6. Reproducibility & Developer Guide
+
+### 6.1 Environment Setup
+
+#### Option A: Using Conda (Recommended)
+```bash
+# 1. Create and activate isolated Python environment
+conda create -n mol-graph python=3.10 -y
+conda activate mol-graph
+
+# 2. Install PyTorch & PyTorch Geometric (CPU or CUDA)
+pip install torch --index-url https://download.pytorch.org/whl/cpu
+pip install torch-geometric
+
+# 3. Install remaining project dependencies
+pip install -r requirements.txt
+```
+
+#### Option B: Using Python `venv`
+```bash
+python -m venv venv
+# On Windows:
+.\venv\Scripts\activate
+# On Linux/macOS:
+source venv/bin/activate
+
+pip install -r requirements.txt
+```
+
+---
+
+### 6.2 CLI Execution & Automation Suite
+
+The repository includes modular CLI scripts under [`scripts/`](scripts/) to automate downloading, benchmarking, report generation, and presentation building:
+
+| Script Path | Purpose | Key CLI Flags / Arguments | Example Command |
+| :--- | :--- | :--- | :--- |
+| `scripts/download_data.py` | Automated NCI1 raw graph archive download, extraction, and validation. | `--root` (default: `"data"`) | `python scripts/download_data.py` |
+| `scripts/run_experiments.py` | Executes the complete end-to-end benchmark across WL ($h=0..3$), SVM baseline, and GCN. | `--subset` (int, default `1200`, `0` for full 4110)<br>`--seed` (int, default `42`)<br>`--config` (path to config.yaml) | `python scripts/run_experiments.py --subset 1200 --seed 42` |
+| `scripts/generate_report.py` | Compiles Markdown benchmark summary. | None (reads `results/metrics/`) | `python scripts/generate_report.py` |
+| `scripts/generate_pdf_report.py` | Generates a publication-grade academic PDF report with ReportLab. | None | `python scripts/generate_pdf_report.py` |
+| `scripts/generate_presentation.py` | Generates a professional 16:9 widescreen PowerPoint deck (`.pptx`). | None | `python scripts/generate_presentation.py` |
+
+---
+
+### 6.3 Automated Unit Testing & Mathematical Verification
+
+The codebase includes an automated test suite under [`tests/`](tests/) verified with `pytest` ensuring mathematical correctness and preventing regressions:
+
+| Test File | Test Case Name | Mathematical Property Verified |
+| :--- | :--- | :--- |
+| `tests/test_preprocessing.py` | `test_molecular_graph_structure` | Validates node count, edge index shapes, and atom feature matrix integrity. |
+| `tests/test_preprocessing.py` | `test_pyg_conversion` | Ensures bidirectional fidelity when converting between PyG `Data` and custom `MolecularGraph`. |
+| `tests/test_wl_kernel.py` | `test_wl_iteration_increases_labels` | Monotonic growth of label dictionary size $|\Sigma_t|$ across iteration depths $t \in \{0, 1, 2, 3\}$. |
+| `tests/test_wl_kernel.py` | `test_triangle_vs_path_isomorphism` | Confirms that 1-WL successfully discriminates non-isomorphic graphs (Triangle $C_3$ vs. Path $P_3$) that share identical bag-of-atoms counts. |
+| `tests/test_wl_kernel.py` | `test_gram_matrix_symmetry` | Verifies that $K = K^\top$ to numerical precision ($|K_{ij} - K_{ji}| < 10^{-12}$). |
+| `tests/test_wl_kernel.py` | `test_gram_matrix_positive_semidefinite` | Validates Mercer's condition by asserting that all eigenvalues $\lambda_i(K) \ge -\epsilon$ (positive semi-definiteness). |
+| `tests/test_wl_kernel.py` | `test_gram_matrix_dimensions` | Asserts strict dimensionality of decoupled Gram matrices: $K_{\text{train,train}} \in \mathbb{R}^{N_{\text{tr}} \times N_{\text{tr}}}$ and $K_{\text{test,train}} \in \mathbb{R}^{N_{\text{te}} \times N_{\text{tr}}}$. |
+
+Run all tests via CLI:
+```bash
+pytest -v
+```
+*Expected Result: `7 passed in 1.42s`.*
+
+---
+
+## 📈 7. Visual Research Gallery & Empirical Plots
 
 All figures are generated in publication-ready resolution (300 DPI) and stored directly in [`results/plots/`](results/plots/):
 
