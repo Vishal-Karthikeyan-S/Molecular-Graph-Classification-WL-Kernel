@@ -1,0 +1,112 @@
+[
+  {
+    "model": "WL (h=0) Standard (Bag-of-Atoms)",
+    "accuracy": 0.525,
+    "precision": 0.51875,
+    "recall": 0.6916666666666667,
+    "f1": 0.5928571428571429,
+    "roc_auc": 0.5823263888888888,
+    "features": 26,
+    "train_time": 0.02093495801091194,
+    "inference_time": 0.006316291983239353
+  },
+  {
+    "model": "WL (h=1) Standard Subtree",
+    "accuracy": 0.6583333333333333,
+    "precision": 0.69,
+    "recall": 0.575,
+    "f1": 0.6272727272727273,
+    "roc_auc": 0.7077777777777777,
+    "features": 206,
+    "train_time": 0.03732804104220122,
+    "inference_time": 0.011473749997094274
+  },
+  {
+    "model": "WL (h=2) Standard Subtree",
+    "accuracy": 0.7125,
+    "precision": 0.7575757575757576,
+    "recall": 0.625,
+    "f1": 0.684931506849315,
+    "roc_auc": 0.7685416666666667,
+    "features": 2162,
+    "train_time": 0.057053124997764826,
+    "inference_time": 0.01710787508636713
+  },
+  {
+    "model": "WL (h=3) Standard Subtree",
+    "accuracy": 0.75,
+    "precision": 0.7884615384615384,
+    "recall": 0.6833333333333333,
+    "f1": 0.7321428571428571,
+    "roc_auc": 0.788125,
+    "features": 10282,
+    "train_time": 0.07460720802191645,
+    "inference_time": 0.021911999909207225
+  },
+  {
+    "model": "WL (h=4) Deep Subtree Overfitting",
+    "accuracy": 0.7458333333333333,
+    "precision": 0.7706422018348624,
+    "recall": 0.7,
+    "f1": 0.7336244541484717,
+    "roc_auc": 0.7997916666666666,
+    "features": 23486,
+    "train_time": 0.09326445800252259,
+    "inference_time": 0.025805249926634133
+  },
+  {
+    "model": "WL (h=3) Unnormalized (Count Bias)",
+    "accuracy": 0.825,
+    "precision": 0.819672131147541,
+    "recall": 0.8333333333333334,
+    "f1": 0.8264462809917356,
+    "roc_auc": 0.8634722222222223,
+    "features": 10282,
+    "train_time": 0.08954962494317442,
+    "inference_time": 0.020881083910353482
+  },
+  {
+    "model": "WL (h=3) Geometric Decay (gamma=0.7)",
+    "accuracy": 0.6875,
+    "precision": 0.7184466019417476,
+    "recall": 0.6166666666666667,
+    "f1": 0.6636771300448431,
+    "roc_auc": 0.7347222222222223,
+    "features": 10282,
+    "train_time": 0.07377320900559425,
+    "inference_time": 0.021285084076225758
+  },
+  {
+    "model": "WL (h=3) Geometric Decay (gamma=0.5)",
+    "accuracy": 0.6625,
+    "precision": 0.7096774193548387,
+    "recall": 0.55,
+    "f1": 0.6197183098591549,
+    "roc_auc": 0.6959027777777778,
+    "features": 10282,
+    "train_time": 0.07463758403901011,
+    "inference_time": 0.022768083959817886
+  },
+  {
+    "model": "WL (h=3) TF-IDF Inverse Frequency",
+    "accuracy": 0.8041666666666667,
+    "precision": 0.7786259541984732,
+    "recall": 0.85,
+    "f1": 0.8127490039840638,
+    "roc_auc": 0.8690277777777778,
+    "features": 10282,
+    "train_time": 0.0769322079140693,
+    "inference_time": 0.02257416700012982
+  },
+  {
+    "model": "WL (h=3) Hybrid (Decay=0.7 + TF-IDF)",
+    "accuracy": 0.7541666666666667,
+    "precision": 0.7479674796747967,
+    "recall": 0.7666666666666667,
+    "f1": 0.757201646090535,
+    "roc_auc": 0.8080555555555556,
+    "features": 10282,
+    "train_time": 0.0992129169171676,
+    "inference_time": 0.022682250011712313
+  }
+]
