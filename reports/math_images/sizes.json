@@ -1,1 +1,50 @@
-{"eq1_multiset": [342.0, 62.64], "eq2_compression": [342.0, 62.64], "eq3_feature_vec": [342.0, 62.64], "eq4_unnorm_kernel": [342.0, 62.64], "eq5_cosine_norm": [342.0, 62.64], "eq6_decay_kernel": [342.0, 62.64], "eq7_tfidf": [342.0, 62.64], "eq8_dual_svm": [342.0, 62.64], "eq9_decision_margin": [342.0, 62.64], "eq10_gcn_layer": [342.0, 62.64], "eq11_global_pool": [342.0, 62.64], "eq12_mercer": [342.0, 62.64]}
+{
+  "eq1_multiset": [
+    166.32,
+    17.52
+  ],
+  "eq2_compression": [
+    175.2,
+    17.52
+  ],
+  "eq3_feature_vec": [
+    252.0,
+    19.2
+  ],
+  "eq4_unnorm_kernel": [
+    271.68,
+    28.8
+  ],
+  "eq5_cosine_norm": [
+    149.52,
+    26.16
+  ],
+  "eq6_decay_kernel": [
+    234.71999999999997,
+    36.72
+  ],
+  "eq7_tfidf": [
+    179.04000000000002,
+    24.240000000000002
+  ],
+  "eq8_dual_svm": [
+    331.68,
+    38.4
+  ],
+  "eq9_decision_margin": [
+    230.64,
+    29.04
+  ],
+  "eq10_gcn_layer": [
+    172.08,
+    18.240000000000002
+  ],
+  "eq11_global_pool": [
+    256.56,
+    29.759999999999998
+  ],
+  "eq12_mercer": [
+    289.91999999999996,
+    18.48
+  ]
+}

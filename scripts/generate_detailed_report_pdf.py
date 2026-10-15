@@ -75,7 +75,7 @@ def build_formal_report_pdf(output_filename="reports/Molecular_Graph_Classificat
     with open(os.path.join(img_dir, "sizes.json"), "r") as f:
         sizes = json.load(f)
 
-    def get_math_img(name, scale=0.70):
+    def get_math_img(name, scale=1.0):
         w, h = sizes[name]
         return Image(os.path.join(img_dir, f"{name}.png"), width=w * scale, height=h * scale)
 
@@ -198,6 +198,16 @@ def build_formal_report_pdf(output_filename="reports/Molecular_Graph_Classificat
         textColor=colors.black
     )
 
+    table_cell_right = ParagraphStyle(
+        'TableCellRight',
+        parent=styles['Normal'],
+        fontName='Times-Bold',
+        fontSize=9,
+        leading=11,
+        alignment=2,
+        textColor=colors.black
+    )
+
     table_header_center = ParagraphStyle(
         'TableHeaderCenter',
         parent=styles['Normal'],
@@ -248,12 +258,12 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
     # ================= 1. INTRODUCTION & PROBLEM FORMULATION =================
     story.append(Paragraph("1. Introduction and Problem Formulation", sec_style))
     story.append(Paragraph(
-        "In chemoinformatics, molecular structures are fundamentally characterized as attributed graphs <i>G</i> = (<i>V</i>, <i>E</i>, &ell;), where vertices <i>v</i> &isin; <i>V</i> represent individual atomic centers, edges (<i>u</i>, <i>v</i>) &isin; <i>E</i> designate chemical covalent bonds, and &ell;: <i>V</i> &rarr; &Sigma;<sub>0</sub> represents a categorical mapping assigning atomic species (e.g., Carbon, Nitrogen, Oxygen, Sulfur, Halogens). "
+        "In chemoinformatics, molecular structures are fundamentally characterized as attributed graphs <i>G</i> = (<i>V</i>, <i>E</i>, <i>l</i>), where vertices <i>v</i> &isin; <i>V</i> represent individual atomic centers, edges (<i>u</i>, <i>v</i>) &isin; <i>E</i> designate chemical covalent bonds, and <i>l</i>: <i>V</i> &rarr; &Sigma;<sub>0</sub> represents a categorical mapping assigning atomic species (e.g., Carbon, Nitrogen, Oxygen, Sulfur, Halogens). "
         "A central objective in computational pharmacology is predicting biochemical endpoints—such as therapeutic efficacy, mutagenicity, or toxicological inhibition—directly from molecular topology.",
         body_style
     ))
     story.append(Paragraph(
-        "Formally, given a corpus of <i>N</i> molecular graphs &Dscr; = {(<i>G</i><sub>1</sub>, <i>y</i><sub>1</sub>), ..., (<i>G</i><sub><i>N</i></sub>, <i>y</i><sub><i>N</i></sub>)}, the objective is learning a hypothesis function <i>f</i>: &Gscr; &rarr; {0, 1} capable of generalizing to unseen chemical entities. "
+        "Formally, given a corpus of <i>N</i> molecular graphs <i>D</i> = {(<i>G</i><sub>1</sub>, <i>y</i><sub>1</sub>), ..., (<i>G</i><sub><i>N</i></sub>, <i>y</i><sub><i>N</i></sub>)}, the objective is learning a hypothesis function <i>f</i>: <i>G</i> &rarr; {0, 1} capable of generalizing to unseen chemical entities. "
         "Unlike Euclidean data (such as fixed-grid images or uniform feature vectors), molecular graphs exhibit high permutation symmetry (isomorphism invariance), variable cardinalities (|<i>V</i>| ranging from 3 to 111 atoms in NCI1), and complex non-Euclidean topologies. "
         "Consequently, conventional statistical models cannot process raw graph adjacency matrices directly without arbitrarily imposing a non-canonical node ordering that breaks invariance.",
         body_style
@@ -288,9 +298,9 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
     story.append(Paragraph(
         "The project benchmarks on the <b>NCI1 (National Cancer Institute)</b> dataset, published as part of the TU Dortmund Graph Kernel Benchmark Library. "
         "The graph entities are formally defined as follows: "
-        "<br/>&bull; <b>Nodes (<i>V</i>):</b> Each vertex represents an individual atom within the molecule. Each atom is categorized into one of 37 discrete elemental classes (Carbon, Oxygen, Nitrogen, Sulfur, Chlorine, Fluorine, Phosphorus, etc.), represented as a 37-dimensional one-hot vector <b>x</b><sub><i>v</i></sub> &isin; {0, 1}<sup>37</sup>. "
-        "<br/>&bull; <b>Edges (<i>E</i>):</b> An edge denotes a covalent chemical bond connecting two atoms. All chemical bonds are modeled as undirected, unweighted links. "
-        "<br/>&bull; <b>Graph Label (<i>y</i>):</b> A binary classification target where <i>y</i> = 1 indicates active anti-neoplastic biological activity inhibiting the proliferation of human non-small cell lung cancer cell lines, while <i>y</i> = 0 denotes an inactive compound.",
+        "<br/>&ndash;&nbsp; <b>Nodes (<i>V</i>):</b> Each vertex represents an individual atom within the molecule. Each atom is categorized into one of 37 discrete elemental classes (Carbon, Oxygen, Nitrogen, Sulfur, Chlorine, Fluorine, Phosphorus, etc.), represented as a 37-dimensional one-hot vector <b>x</b><sub><i>v</i></sub> &isin; {0, 1}<sup>37</sup>. "
+        "<br/>&ndash;&nbsp; <b>Edges (<i>E</i>):</b> An edge denotes a covalent chemical bond connecting two atoms. All chemical bonds are modeled as undirected, unweighted links. "
+        "<br/>&ndash;&nbsp; <b>Graph Label (<i>y</i>):</b> A binary classification target where <i>y</i> = 1 indicates active anti-neoplastic biological activity inhibiting the proliferation of human non-small cell lung cancer cell lines, while <i>y</i> = 0 denotes an inactive compound.",
         body_style
     ))
 
@@ -334,33 +344,33 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
     story.append(Paragraph("4.1 1-WL Color Refinement and Canonical Labeling", subsec_style))
     story.append(Paragraph(
         "The 1-dimensional Weisfeiler–Lehman algorithm is a classical algebraic heuristic designed for the graph isomorphism problem. "
-        "Let <i>G</i> = (<i>V</i>, <i>E</i>) be an undirected graph with initial discrete node labels &ell;<sub>0</sub>(<i>v</i>) &isin; &Sigma;<sub>0</sub>. "
+        "Let <i>G</i> = (<i>V</i>, <i>E</i>) be an undirected graph with initial discrete node labels <i>l</i><sub>0</sub>(<i>v</i>) &isin; &Sigma;<sub>0</sub>. "
         "At each iteration <i>t</i> = 1, ..., <i>h</i>, the algorithm refines node labels in two deterministic phases:",
         body_style
     ))
     story.append(Paragraph("<b>Phase 1 (Multiset Neighborhood Aggregation):</b> For every vertex <i>v</i> &isin; <i>V</i>, collect the multiset of labels belonging to its immediate 1-hop topological neighbors:", body_style))
 
-    eq1_table = Table([[get_math_img("eq1_multiset"), Paragraph("<b>(Eq. 1)</b>", table_cell)]], colWidths=[5.5*inch, 0.7*inch])
+    eq1_table = Table([[get_math_img("eq1_multiset"), Paragraph("<b>(Eq. 1)</b>", table_cell_right)]], colWidths=[6.1*inch, 0.9*inch])
     eq1_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
     story.append(eq1_table)
     story.append(Spacer(1, 4))
 
     story.append(Paragraph("<b>Phase 2 (Deterministic Sorting & Injective Compression):</b> Sort the multiset in ascending lexicographical order to construct a unique signature tuple, and map it to a new integer label via an injective compression function <i>g</i>:", body_style))
 
-    eq2_table = Table([[get_math_img("eq2_compression"), Paragraph("<b>(Eq. 2)</b>", table_cell)]], colWidths=[5.5*inch, 0.7*inch])
+    eq2_table = Table([[get_math_img("eq2_compression"), Paragraph("<b>(Eq. 2)</b>", table_cell_right)]], colWidths=[6.1*inch, 0.9*inch])
     eq2_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
     story.append(eq2_table)
     story.append(Spacer(1, 4))
 
     story.append(Paragraph("4.2 Subtree Invariant Property and Feature Vector Mapping", subsec_style))
     story.append(Paragraph(
-        "A foundational mathematical property proven by Shervashidze et al. (2011) is that each compressed label &ell;<sub><i>t</i></sub>(<i>v</i>) uniquely identifies an equivalence class of rooted subtree patterns of height <i>t</i> centered at vertex <i>v</i>. "
+        "A foundational mathematical property proven by Shervashidze et al. (2011) is that each compressed label <i>l</i><sub><i>t</i></sub>(<i>v</i>) uniquely identifies an equivalence class of rooted subtree patterns of height <i>t</i> centered at vertex <i>v</i>. "
         "Let &Sigma;<sub><i>t</i></sub> represent the set of all unique compressed labels observed across the training corpus at iteration <i>t</i>, and let &Sigma; = &cup;<sub><i>t</i>=0</sub><sup><i>h</i></sup> &Sigma;<sub><i>t</i></sub> be the total discovered subtree vocabulary. "
         "The feature map &phi;(<i>G</i>) is defined as the concatenated histogram of subtree label occurrences across iterations 0 through <i>h</i>:",
         body_style
     ))
 
-    eq3_table = Table([[get_math_img("eq3_feature_vec"), Paragraph("<b>(Eq. 3)</b>", table_cell)]], colWidths=[5.5*inch, 0.7*inch])
+    eq3_table = Table([[get_math_img("eq3_feature_vec"), Paragraph("<b>(Eq. 3)</b>", table_cell_right)]], colWidths=[6.1*inch, 0.9*inch])
     eq3_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
     story.append(eq3_table)
     story.append(Spacer(1, 4))
@@ -371,7 +381,7 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
         body_style
     ))
 
-    eq4_table = Table([[get_math_img("eq4_unnorm_kernel"), Paragraph("<b>(Eq. 4)</b>", table_cell)]], colWidths=[5.5*inch, 0.7*inch])
+    eq4_table = Table([[get_math_img("eq4_unnorm_kernel"), Paragraph("<b>(Eq. 4)</b>", table_cell_right)]], colWidths=[6.1*inch, 0.9*inch])
     eq4_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
     story.append(eq4_table)
     story.append(Spacer(1, 4))
@@ -382,7 +392,7 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
         body_style
     ))
 
-    eq5_table = Table([[get_math_img("eq5_cosine_norm"), Paragraph("<b>(Eq. 5)</b>", table_cell)]], colWidths=[5.5*inch, 0.7*inch])
+    eq5_table = Table([[get_math_img("eq5_cosine_norm"), Paragraph("<b>(Eq. 5)</b>", table_cell_right)]], colWidths=[6.1*inch, 0.9*inch])
     eq5_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
     story.append(eq5_table)
     story.append(Spacer(1, 4))
@@ -390,12 +400,12 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
     story.append(Paragraph("4.4 Analytical Proof: Distinguishing Cycle C3 vs. Path P3", subsec_style))
     story.append(Paragraph(
         "To rigorously confirm our scratch implementation, we analyze two non-isomorphic graphs with identical node counts (|<i>V</i>| = 3) and identical atom labels [1, 1, 1]: "
-        "<br/>&bull; <b>Graph A (Triangle Cycle <i>C</i><sub>3</sub>):</b> Edges {(0, 1), (1, 2), (2, 0)}. Every vertex has degree 2. "
-        "<br/>&bull; <b>Graph B (Linear Path <i>P</i><sub>3</sub>):</b> Edges {(0, 1), (1, 2)}. Endpoints have degree 1; center vertex has degree 2. "
+        "<br/>&ndash;&nbsp; <b>Graph A (Triangle Cycle <i>C</i><sub>3</sub>):</b> Edges {(0, 1), (1, 2), (2, 0)}. Every vertex has degree 2. "
+        "<br/>&ndash;&nbsp; <b>Graph B (Linear Path <i>P</i><sub>3</sub>):</b> Edges {(0, 1), (1, 2)}. Endpoints have degree 1; center vertex has degree 2. "
         "<br/>At iteration <i>h</i> = 0, both graphs produce identical feature vectors &phi;<sub>0</sub> = [3.0]. An algorithm without neighborhood context is blind to their structural divergence. "
         "<br/>At iteration <i>h</i> = 1, color refinement maps the signatures: "
-        "<br/>&bull; For <i>C</i><sub>3</sub>: All 3 vertices have signature (1, 0, (0, 0)) &rarr; assigned ID 1. &phi;(<i>C</i><sub>3</sub>) = [3, 3, 0]<sup>&top;</sup>. "
-        "<br/>&bull; For <i>P</i><sub>3</sub>: Center vertex has signature (1, 0, (0, 0)) &rarr; ID 1. Endpoints have signature (1, 0, (0,)) &rarr; ID 2. &phi;(<i>P</i><sub>3</sub>) = [3, 1, 2]<sup>&top;</sup>. "
+        "<br/>&ndash;&nbsp; For <i>C</i><sub>3</sub>: All 3 vertices have signature (1, 0, (0, 0)) &rarr; assigned ID 1. &phi;(<i>C</i><sub>3</sub>) = [3, 3, 0]<sup><i>T</i></sup>. "
+        "<br/>&ndash;&nbsp; For <i>P</i><sub>3</sub>: Center vertex has signature (1, 0, (0, 0)) &rarr; ID 1. Endpoints have signature (1, 0, (0,)) &rarr; ID 2. &phi;(<i>P</i><sub>3</sub>) = [3, 1, 2]<sup><i>T</i></sup>. "
         "<br/>Evaluating the inner products yields: "
         "<br/>&nbsp;&nbsp;&nbsp;&nbsp;<i>K</i>(<i>C</i><sub>3</sub>, <i>C</i><sub>3</sub>) = 3&times;3 + 3&times;3 + 0&times;0 = 18 "
         "<br/>&nbsp;&nbsp;&nbsp;&nbsp;<i>K</i>(<i>P</i><sub>3</sub>, <i>P</i><sub>3</sub>) = 3&times;3 + 1&times;1 + 2&times;2 = 14 "
@@ -421,7 +431,7 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
         body_style
     ))
 
-    eq6_table = Table([[get_math_img("eq6_decay_kernel"), Paragraph("<b>(Eq. 6)</b>", table_cell)]], colWidths=[5.5*inch, 0.7*inch])
+    eq6_table = Table([[get_math_img("eq6_decay_kernel"), Paragraph("<b>(Eq. 6)</b>", table_cell_right)]], colWidths=[6.1*inch, 0.9*inch])
     eq6_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
     story.append(eq6_table)
     story.append(Spacer(1, 4))
@@ -434,7 +444,7 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
         body_style
     ))
 
-    eq7_table = Table([[get_math_img("eq7_tfidf"), Paragraph("<b>(Eq. 7)</b>", table_cell)]], colWidths=[5.5*inch, 0.7*inch])
+    eq7_table = Table([[get_math_img("eq7_tfidf"), Paragraph("<b>(Eq. 7)</b>", table_cell_right)]], colWidths=[6.1*inch, 0.9*inch])
     eq7_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
     story.append(eq7_table)
     story.append(Spacer(1, 4))
@@ -455,7 +465,7 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
         body_style
     ))
 
-    eq8_table = Table([[get_math_img("eq8_dual_svm"), Paragraph("<b>(Eq. 8)</b>", table_cell)]], colWidths=[5.5*inch, 0.7*inch])
+    eq8_table = Table([[get_math_img("eq8_dual_svm"), Paragraph("<b>(Eq. 8)</b>", table_cell_right)]], colWidths=[6.1*inch, 0.9*inch])
     eq8_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
     story.append(eq8_table)
     story.append(Spacer(1, 4))
@@ -465,7 +475,7 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
         body_style
     ))
 
-    eq9_table = Table([[get_math_img("eq9_decision_margin"), Paragraph("<b>(Eq. 9)</b>", table_cell)]], colWidths=[5.5*inch, 0.7*inch])
+    eq9_table = Table([[get_math_img("eq9_decision_margin"), Paragraph("<b>(Eq. 9)</b>", table_cell_right)]], colWidths=[6.1*inch, 0.9*inch])
     eq9_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
     story.append(eq9_table)
     story.append(Spacer(1, 4))
@@ -481,12 +491,12 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
     story.append(Paragraph("6.3 3-Layer Graph Convolutional Network (GCN)", subsec_style))
     story.append(Paragraph(
         "Following Kipf & Welling (ICLR 2017), we formulated an end-to-end 3-layer Graph Convolutional Network using PyTorch and PyTorch Geometric. "
-        "Let <i>H</i><sup>(0)</sup> &isin; &real;<sup>|<i>V</i>| &times; 37</sup> denote the initial atomic feature matrix, and let <i>A&#771;</i> = <i>A</i> + <i>I</i><sub><i>N</i></sub> denote the adjacency augmented with self-loops. "
+        "Let <i>H</i><sup>(0)</sup> &isin; &real;<sup>|<i>V</i>| &times; 37</sup> denote the initial atomic feature matrix, and let <i>Ã</i> = <i>A</i> + <i>I</i><sub><i>N</i></sub> denote the adjacency augmented with self-loops. "
         "The graph convolution layer computes:",
         body_style
     ))
 
-    eq10_table = Table([[get_math_img("eq10_gcn_layer"), Paragraph("<b>(Eq. 10)</b>", table_cell)]], colWidths=[5.5*inch, 0.7*inch])
+    eq10_table = Table([[get_math_img("eq10_gcn_layer"), Paragraph("<b>(Eq. 10)</b>", table_cell_right)]], colWidths=[6.1*inch, 0.9*inch])
     eq10_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
     story.append(eq10_table)
     story.append(Spacer(1, 4))
@@ -496,7 +506,7 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
         body_style
     ))
 
-    eq11_table = Table([[get_math_img("eq11_global_pool"), Paragraph("<b>(Eq. 11)</b>", table_cell)]], colWidths=[5.5*inch, 0.7*inch])
+    eq11_table = Table([[get_math_img("eq11_global_pool"), Paragraph("<b>(Eq. 11)</b>", table_cell_right)]], colWidths=[6.1*inch, 0.9*inch])
     eq11_table.setStyle(TableStyle([('VALIGN', (0, 0), (-1, -1), 'MIDDLE')]))
     story.append(eq11_table)
     story.append(Spacer(1, 4))
@@ -657,11 +667,11 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
     story.append(Paragraph(
         "To operationalize this research and provide an accessible diagnostic tool for computational chemists, we engineered and deployed an interactive web application using Streamlit (`app.py`). "
         "The architecture is organized into five interactive modules: "
-        "<br/>&bull; <b>Module 1 (Project Overview):</b> Presents the mathematical formulation, research objectives, and benchmark metrics dynamically. "
-        "<br/>&bull; <b>Module 2 (Dataset Explorer):</b> Displays NCI1 summary statistics, class distributions, and renders 2D molecular graphs with elemental node color-coding via NetworkX. "
-        "<br/>&bull; <b>Module 3 (1-WL Kernel Explorer):</b> Provides step-by-step visual proofs of color refinement on the <i>C</i><sub>3</sub> vs. <i>P</i><sub>3</sub> benchmark and inspects real compressed subtree hash signatures from NCI1 compounds. "
-        "<br/>&bull; <b>Module 4 (Empirical Model Comparison):</b> Interactively plots performance tables, confusion matrices, runtime profiles, and training curves. "
-        "<br/>&bull; <b>Module 5 (Interactive Prediction Demo):</b> Allows users to select any compound, executing real-time inference via pre-trained SVM weights (`models/wl_clf_h2.pkl`) and outputting the signed geometric margin distance <i>f</i>(<i>G</i>).",
+        "<br/>&ndash;&nbsp; <b>Module 1 (Project Overview):</b> Presents the mathematical formulation, research objectives, and benchmark metrics dynamically. "
+        "<br/>&ndash;&nbsp; <b>Module 2 (Dataset Explorer):</b> Displays NCI1 summary statistics, class distributions, and renders 2D molecular graphs with elemental node color-coding via NetworkX. "
+        "<br/>&ndash;&nbsp; <b>Module 3 (1-WL Kernel Explorer):</b> Provides step-by-step visual proofs of color refinement on the <i>C</i><sub>3</sub> vs. <i>P</i><sub>3</sub> benchmark and inspects real compressed subtree hash signatures from NCI1 compounds. "
+        "<br/>&ndash;&nbsp; <b>Module 4 (Empirical Model Comparison):</b> Interactively plots performance tables, confusion matrices, runtime profiles, and training curves. "
+        "<br/>&ndash;&nbsp; <b>Module 5 (Interactive Prediction Demo):</b> Allows users to select any compound, executing real-time inference via pre-trained SVM weights (`models/wl_clf_h2.pkl`) and outputting the signed geometric margin distance <i>f</i>(<i>G</i>).",
         body_style
     ))
 
@@ -670,7 +680,7 @@ SRICHARAN A (CB.SC.U4CSE23764)<br/>
     story.append(Paragraph(
         "Despite the strong empirical performance of our enhanced WL kernel, several methodological limitations suggest promising avenues for future research: "
         "<br/>1. <b>Continuous Feature Integration:</b> The classical 1-WL color refinement assumes discrete, categorical node attributes. Extending the framework to continuous 3D atomic coordinates or quantum chemical descriptors requires hybrid continuous-discrete color refinement or Wasserstein WL kernels (Togninalli et al., NeurIPS 2019). "
-        "<br/>2. <b>Quadratic Gram Matrix Complexity:</b> Computing pairwise kernel similarities scales as &Oscr;(<i>N</i><sup>2</sup> &middot; |&Sigma;|), which becomes computationally demanding for massive industrial chemical repositories (<i>N</i> &gt; 100,000). Linear-time random feature projections or Nystr&ouml;m low-rank kernel approximations could alleviate this constraint. "
+        "<br/>2. <b>Quadratic Gram Matrix Complexity:</b> Computing pairwise kernel similarities scales as <i>O</i>(<i>N</i><sup>2</sup> &middot; |&Sigma;|), which becomes computationally demanding for massive industrial chemical repositories (<i>N</i> &gt; 100,000). Linear-time random feature projections or Nystr&ouml;m low-rank kernel approximations could alleviate this constraint. "
         "<br/>3. <b>Higher-Order <i>k</i>-WL Extensions:</b> Standard 1-WL is blind to certain non-isomorphic strongly regular graphs. Formulating higher-order 2-WL or 3-WL kernels over sub-structural atom cliques could capture non-local molecular geometry.",
         body_style
     ))
